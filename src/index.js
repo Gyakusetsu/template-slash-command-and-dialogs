@@ -46,8 +46,6 @@ app.post('/command', async (req, res) => {
 
   const result = await commandHandler(user_id, command);
 
-  console.log(result);
-
   // create the modal payload - includes the dialog structure, Slack API token,
   // and trigger ID
   // let view = payloads.modal({
