@@ -25,6 +25,7 @@
     "express": "^4.15.2",
     "knex": "^0.20.13",
     "moment": "^2.24.0",
+    "moment-timezone": "^0.5.28",
     "mysql": "^2.18.1",
     "tsscmp": "^1.0.6"
   },
