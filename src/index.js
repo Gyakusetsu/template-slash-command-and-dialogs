@@ -42,21 +42,25 @@ app.post('/command', async (req, res) => {
   }
 
   // extract the slash command text, and trigger ID from payload
-  const { command, user_id, response_url } = req.body;
+  const { command, user_id, response_url, channel_id } = req.body;
 
 
   // Covid Data
 
   if (command == '/covid-ph') {
-    const phToday = await axios.get('https://corona.lmao.ninja/countries/PH');
-
+    let phToday = {};
+    await axios.get('https://corona.lmao.ninja/countries/PH')
+      .then((result) => {
+        phToday = result.data;
+      })
     return res.status(200).json({
+      "channel": channel_id,
       "blocks": [
         {
           "type": "section",
           "text": {
             "type": "mrkdwn",
-            "text": ":flag-ph: API reference is *https://github.com/NovelCOVID/API*"
+            "text": `:flag-ph: API reference is https://github.com/NovelCOVID/API`
           }
         },
         {
@@ -71,22 +75,25 @@ app.post('/command', async (req, res) => {
               `Recovered : *${phToday.recovered}*\n` +
               `Active : *${phToday.active}*\n` +
               `Critical : *${phToday.critical}*\n` +
-              `Critical : *${phToday.critical}*\n` +
-              `Last Update (UTC) : *${new Date(phToday.updated)}*\n`
+              `Last Update : *${new Date(phToday.updated)}*\n`
           }
         }
       ]
     });
   } else if (command == '/covid-world') {
-    const worldToday = await axios.get('https://corona.lmao.ninja/all');
-
+    let worldToday = {};
+    await axios.get('https://corona.lmao.ninja/all')
+      .then((result) => {
+        worldToday = result.data;
+      })
     return res.status(200).json({
+      "channel": channel_id,
       "blocks": [
         {
           "type": "section",
           "text": {
             "type": "mrkdwn",
-            "text": ":flags: API reference is *https://github.com/NovelCOVID/API*"
+            "text": `:flags: API reference is https://github.com/NovelCOVID/API`
           }
         },
         {
@@ -98,7 +105,7 @@ app.post('/command', async (req, res) => {
               `Deaths : *${worldToday.deaths}*\n` +
               `Recovered : *${worldToday.recovered}*\n` +
               `Active : *${worldToday.active}*\n` +
-              `Last Update (UTC) : *${new Date(worldToday.updated)}*\n`
+              `Last Update : *${new Date(worldToday.updated)}*\n`
           }
         }
       ]
