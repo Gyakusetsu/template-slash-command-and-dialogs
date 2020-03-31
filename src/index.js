@@ -4,9 +4,9 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const ticket = require('./ticket');
 const signature = require('./verifySignature');
-const api = require('./api');
-const payloads = require('./payloads');
 const debug = require('debug')('slash-command-template:index');
+const axios = require('axios');
+const { commandHandler } = require('./commands');
 
 const app = express();
 
@@ -42,18 +42,33 @@ app.post('/command', async (req, res) => {
   }
 
   // extract the slash command text, and trigger ID from payload
-  const { trigger_id } = req.body;
+  const { command, user_id, response_url } = req.body;
+
+  const result = await commandHandler(user_id, command);
+
+  console.log(result);
 
   // create the modal payload - includes the dialog structure, Slack API token,
   // and trigger ID
-  let view = payloads.modal({
-    trigger_id
+  // let view = payloads.modal({
+  //   trigger_id
+  // });
+
+  // let result = await api.callAPIMethod('views.open', view);
+
+  if (result.type == 'in_channel') {
+    await axios.post(response_url, {
+      "text": result.text,
+      "response_type": result.type
+    });
+
+    return res.status(200).send('');
+  }
+
+  // debug('views.open: %o', result);
+  return res.status(200).json({
+    "text": result.text
   });
-
-  let result = await api.callAPIMethod('views.open', view);
-
-  debug('views.open: %o', result);
-  return res.send('');
 });
 
 /*

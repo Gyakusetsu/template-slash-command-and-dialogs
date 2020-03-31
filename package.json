@@ -24,6 +24,8 @@
     "dotenv": "^4.0.0",
     "express": "^4.15.2",
     "knex": "^0.20.13",
+    "moment": "^2.24.0",
+    "mysql": "^2.18.1",
     "tsscmp": "^1.0.6"
   },
   "devDependencies": {
