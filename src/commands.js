@@ -52,8 +52,7 @@ async function commandHandler(user, command) {
     case '/list':
       const records = await selectRecords(user);
       const response = records
-        .map(r => `type: *${r.type.toUpperCase()}* time: *${moment(r.timestamp).format('MMMM Do YYYY, h:mm a')}* 
-                    ${r.computation > 0 ? `computation : ${r.computation}`: ''}`)
+        .map(r => `type: *${r.type.toUpperCase()}* time: *${moment(r.timestamp).format('MMMM Do YYYY, h:mm a')}* ${r.computation > 0 ? `computation : ${r.computation}`: ''}`)
         .reduce((pre, cur) => cur + '\n' + pre);
 
       commandResponse.text = response;
