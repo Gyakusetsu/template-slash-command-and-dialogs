@@ -15,10 +15,11 @@ const insertTypeIn = (user) => (
       user
     })
 );
-const insertTypeOut = (user) => (
+const insertTypeOut = (user, computation) => (
   mysql('attendance').insert({
       type: 'out',
-      user
+      user,
+      computation : computation
     })
 );
 const selectLastTypeAndTime = (user) => (

@@ -1,9 +1,9 @@
 const { selectLastTypeAndTime, selectRecords, insertTypeIn, insertTypeOut } = require('./db');
 const api = require('./api');
+const moment = require('moment');
 
 async function commandHandler(user, command) {
   const record = await selectLastTypeAndTime(user) || null;
-  const dateNow = new Date();
   const result = await api.callAPIMethod('users.info', {
     user: user
   });
@@ -18,7 +18,7 @@ async function commandHandler(user, command) {
   // if (record.length === 0) {
   //   if (command === '/login') {
   //     await insertTypeIn(user)
-  //     commandResponse.text = `*${userName}* logged-in ${dateNow}`;
+  //     commandResponse.text = `*${userName}* logged-in ${moment().format('MMMM Do YYYY, h:mm a')}`;
   //     commandResponse.type = 'in_channel';
   //   } else {
   //     commandResponse.text = `*${userName}* you can type login first`;
@@ -29,7 +29,7 @@ async function commandHandler(user, command) {
     case '/login':
       if (record.length === 0 || record[0].type !== 'in') {
         await insertTypeIn(user);
-        commandResponse.text = `*${userName}* logged-in ${dateNow}`;
+        commandResponse.text = `*${userName}* logged-in *${moment().format('MMMM Do YYYY, h:mm a')}*`;
         commandResponse.type = 'in_channel';
       } else {
         commandResponse.text = `*${userName}* already logged-in`;
@@ -39,8 +39,9 @@ async function commandHandler(user, command) {
 
     case '/logout':
       if (record[0].type !== 'out') {
-        await insertTypeOut(user);
-        commandResponse.text = `*${userName}* logged-out ${dateNow}`;
+        const hours = Math.abs(new Date() - record[0].timestamp) / 36e5;
+        await insertTypeOut(user, hours);
+        commandResponse.text = `*${userName}* logged-out *${moment().format('MMMM Do YYYY, h:mm a')}* Hours : ${hours} ${new Date()} - ${record[0].timestamp}`;
         commandResponse.type = 'in_channel';
       } else {
         commandResponse.text = `*${userName}* already logged-out`;
@@ -51,7 +52,7 @@ async function commandHandler(user, command) {
     case '/list':
       const records = await selectRecords(user);
       const response = records
-        .map(r => `type: ${r.type} time: ${r.timestamp}`)
+        .map(r => `type: *${r.type.toUpperCase()}* time: *${moment(r.timestamp).format('MMMM Do YYYY, h:mm a')}*`)
         .reduce((pre, cur) => cur + '\n' + pre);
 
       commandResponse.text = response;
