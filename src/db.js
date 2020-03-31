@@ -31,7 +31,7 @@ const selectLastTypeAndTime = (user) => (
     .limit(1)
 )
 const selectRecords = (user, sort = 'desc') => (
-  mysql.select('type', 'timestamp')
+  mysql.select('type', 'timestamp', 'computation')
     .from('attendance')
     .where('user', user)
     .orderBy('timestamp', sort)
