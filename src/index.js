@@ -42,7 +42,7 @@ app.post('/command', async (req, res) => {
   }
 
   // extract the slash command text, and trigger ID from payload
-  const { command, user_id, response_url, channel_id } = req.body;
+  const { command, user_id, response_url } = req.body;
 
 
   // Covid Data
@@ -54,7 +54,7 @@ app.post('/command', async (req, res) => {
         phToday = result.data;
       })
     return res.status(200).json({
-      "channel": channel_id,
+      "response_type": 'in_channel',
       "blocks": [
         {
           "type": "section",
@@ -87,7 +87,7 @@ app.post('/command', async (req, res) => {
         worldToday = result.data;
       })
     return res.status(200).json({
-      "channel": channel_id,
+      "response_type": 'in_channel',
       "blocks": [
         {
           "type": "section",
