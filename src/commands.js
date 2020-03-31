@@ -39,9 +39,9 @@ async function commandHandler(user, command) {
 
     case '/logout':
       if (record[0].type !== 'out') {
-        const hours = Math.abs(new Date() - record[0].timestamp) / 36e5;
+        const hours = Math.abs(Date.now() - record[0].timestamp) / 36e5;
         await insertTypeOut(user, hours);
-        commandResponse.text = `*${userName}* logged-out *${moment().format('MMMM Do YYYY, h:mm a')}* Hours : ${hours} ${new Date()} - ${record[0].timestamp}`;
+        commandResponse.text = `*${userName}* logged-out *${moment().format('MMMM Do YYYY, h:mm a')}* Hours : *${hours.toFixed(2)}*`;
         commandResponse.type = 'in_channel';
       } else {
         commandResponse.text = `*${userName}* already logged-out`;

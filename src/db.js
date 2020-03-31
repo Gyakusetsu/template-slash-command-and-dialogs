@@ -1,6 +1,7 @@
 const mysql = require('knex')({
   client: 'mysql',
   connection: {
+    timezone: 'UTC',
     host : process.env.DB_HOST,
     port : process.env.DB_PORT,
     user : process.env.DB_USER,
@@ -26,7 +27,7 @@ const selectLastTypeAndTime = (user) => (
   mysql.select('type', 'timestamp')
     .from('attendance')
     .where('user', user)
-    .orderBy('timestamp', 'desc')
+    .orderBy('timestamp', 'desc', { useTz: true })
     .limit(1)
 )
 const selectRecords = (user, sort = 'desc') => (
