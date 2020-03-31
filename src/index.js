@@ -44,6 +44,67 @@ app.post('/command', async (req, res) => {
   // extract the slash command text, and trigger ID from payload
   const { command, user_id, response_url } = req.body;
 
+
+  // Covid Data
+
+  if (command == '/covid-ph') {
+    const phToday = await axios.get('https://corona.lmao.ninja/countries/PH');
+
+    return res.status(200).json({
+      "blocks": [
+        {
+          "type": "section",
+          "text": {
+            "type": "mrkdwn",
+            "text": ":flag-ph: API reference is *https://github.com/NovelCOVID/API*"
+          }
+        },
+        {
+          "type": "section",
+          "text": {
+            "type": "mrkdwn",
+            "text":
+              `Cases: *${phToday.cases}* \n` +
+              `Cases Today : *${phToday.todayCases}*\n` +
+              `Deaths : *${phToday.deaths}*\n` +
+              `Deaths Today : *${phToday.todayDeaths}*\n` +
+              `Recovered : *${phToday.recovered}*\n` +
+              `Active : *${phToday.active}*\n` +
+              `Critical : *${phToday.critical}*\n` +
+              `Critical : *${phToday.critical}*\n` +
+              `Last Update (UTC) : *${new Date(phToday.updated)}*\n`
+          }
+        }
+      ]
+    });
+  } else if (command == '/covid-world') {
+    const worldToday = await axios.get('https://corona.lmao.ninja/all');
+
+    return res.status(200).json({
+      "blocks": [
+        {
+          "type": "section",
+          "text": {
+            "type": "mrkdwn",
+            "text": ":flags: API reference is *https://github.com/NovelCOVID/API*"
+          }
+        },
+        {
+          "type": "section",
+          "text": {
+            "type": "mrkdwn",
+            "text":
+              `Cases: *${worldToday.cases}* \n` +
+              `Deaths : *${worldToday.deaths}*\n` +
+              `Recovered : *${worldToday.recovered}*\n` +
+              `Active : *${worldToday.active}*\n` +
+              `Last Update (UTC) : *${new Date(worldToday.updated)}*\n`
+          }
+        }
+      ]
+    });
+  }
+
   const result = await commandHandler(user_id, command);
 
   // create the modal payload - includes the dialog structure, Slack API token,
