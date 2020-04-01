@@ -8,6 +8,17 @@ const debug = require('debug')('slash-command-template:index');
 const axios = require('axios');
 const { commandHandler } = require('./commands');
 
+const CronJob = require('cron').CronJob;
+
+const every10minutes = '0 */10 * * * *';
+
+const jobAwake = new CronJob(every10minutes, async function () {
+  const result = await axios.get(`${process.env.AWAKE_URL}`);
+  console.log(result.data);
+});
+
+jobAwake.start();
+
 const app = express();
 
 /*
@@ -26,8 +37,7 @@ app.use(bodyParser.urlencoded({ verify: rawBodyBuffer, extended: true }));
 app.use(bodyParser.json({ verify: rawBodyBuffer }));
 
 app.get('/', (req, res) => {
-  res.send('<h2>The Slash Command and Dialog app is running</h2> <p>Follow the' +
-    ' instructions in the README to configure the Slack App and your environment variables.</p>');
+  return res.status(200).send(`Healthy Since ${new Date()}`);
 });
 
 /*
