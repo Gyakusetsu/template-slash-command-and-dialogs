@@ -8,16 +8,16 @@ const debug = require('debug')('slash-command-template:index');
 const axios = require('axios');
 const { commandHandler } = require('./commands');
 
-const CronJob = require('cron').CronJob;
+// const CronJob = require('cron').CronJob;
 
-const every10minutes = '0 */10 * * * *';
+// const every10minutes = '0 */10 * * * *';
 
-const jobAwake = new CronJob(every10minutes, async function () {
-  const result = await axios.get(`${process.env.AWAKE_URL}`);
-  console.log(result.data);
-});
+// const jobAwake = new CronJob(every10minutes, async function () {
+//   const result = await axios.get(`${process.env.AWAKE_URL}`);
+//   console.log(result.data);
+// });
 
-jobAwake.start();
+// jobAwake.start();
 
 const app = express();
 
@@ -133,9 +133,10 @@ app.post('/command', async (req, res) => {
   // let result = await api.callAPIMethod('views.open', view);
 
   if (result.type == 'in_channel') {
-    await axios.post(response_url, {
+    await axios.post(process.env.SLACK_WEBHOOK_URL, {
       "text": result.text,
-      "response_type": result.type
+      "response_type": result.type,
+      "channel" : process.env.SLACK_REPLY_CHANNEL_ID
     });
 
     return res.status(200).send('');
