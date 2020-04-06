@@ -136,7 +136,6 @@ app.post('/command', async (req, res) => {
     await axios.post(process.env.SLACK_WEBHOOK_URL, {
       "text": result.text,
       "response_type": result.type,
-      "channel" : process.env.SLACK_REPLY_CHANNEL_ID
     });
 
     return res.status(200).send('');
