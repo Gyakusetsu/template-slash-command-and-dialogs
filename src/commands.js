@@ -1,4 +1,4 @@
-const { selectLastTypeAndTime, selectRecords, insertTypeIn, insertTypeOut } = require('./db');
+const { selectLastTypeAndTime, selectRecords, insertTypeIn, insertTypeOut, registerUser } = require('./db');
 const api = require('./api');
 const moment = require('moment-timezone');
 
@@ -52,10 +52,23 @@ async function commandHandler(user, command) {
     case '/list':
       const records = await selectRecords(user);
       const response = records
-        .map(r => `type: *${r.type.toUpperCase()}* time: *${moment(r.timestamp).tz("Asia/Manila").format('MMMM Do YYYY, h:mm a')}* ${r.computation > 0 ? `computation : ${r.computation}`: ''}`)
+        .map(r => `type: *${r.type.toUpperCase()}* time: *${moment(r.timestamp).tz("Asia/Manila").format('MMMM Do YYYY, h:mm a')}* ${r.computation > 0 ? `computation : ${r.computation}` : ''}`)
         .reduce((pre, cur) => cur + '\n' + pre);
 
       commandResponse.text = response;
+
+      break;
+
+    case '/register':
+      // just catch unique constrait on mysql
+      try {
+        await registerUser(user, userName);
+        commandResponse.text = `Hello *${userName}* thank you for registering your name!`;        
+        commandResponse.type = 'in_channel';
+      } catch (error) {
+        console.error(error);
+        commandResponse.text = `Hello *${userName}* you're already registered`;
+      }
 
       break;
 
